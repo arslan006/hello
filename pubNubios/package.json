@@ -1,0 +1,17 @@
+{
+  "name": "com.pubnub.co",
+  "version": "0.0.1",
+  "description": "",
+  "cordova": {
+    "id": "com.pubnub.co",
+    "platforms": [
+      "ios"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-ios"
+  ],
+  "author": "",
+  "license": "ISC"
+}
