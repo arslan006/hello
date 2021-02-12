@@ -19,24 +19,59 @@
 
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-document.addEventListener('deviceready', onDeviceReady, false);
-
+document.addEventListener('deviceready', function () {
+    console.log('=========================')
+    cordova.plugins.backgroundMode.enable();
+    onDeviceReady()
+    //    setInterval(()=>{
+    //        if(send ){
+    //            publishMessage()
+    //        }
+    //    },8000)
+}, false);
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
-
+    
     //  parameter sequence  (publishKeys, subcriptionKey, channelName, authKey)
     window.cordova.plugins.pubNubios.coolMethod(["pub-c-011fbf59-31e8-45f4-8e94-9feb817a3ee0",
-    "sub-c-e3821d24-0458-11eb-ac24-4e38869d876d", "awesomeChannel", 
-    "sec-c-MjNlNzFkNWMtMWU4Ni00N2MyLTliZmEtMGRhZGZhNGMxZmFl"],(s)=>{
-        document.getElementById('deviceready').textContent = `++++${s}`;
+                                                 "sub-c-e3821d24-0458-11eb-ac24-4e38869d876d", "awesomeChannel",
+                                                 "sec-c-MjNlNzFkNWMtMWU4Ni00N2MyLTliZmEtMGRhZGZhNGMxZmFl"],(s)=>{
+        document.getElementById('deviceready').textContent = `+--+++${s}`;
+        s = JSON.parse(s);
         console.log(s);
-        // publishMessage();
+        if(s && s.message.content)
+        {
+            publishMessage(s.message.content)
+        } else if(s && s.publisher)
+        {
+            //            publishMessage(s.message)
+        }
+        else if(s && s.channel)
+        {
+            //            publishMessage(s.message)
+        }
+        
+        else if(s && s.subscription)
+        {
+            //            publishMessage(s.message)
+        }
+        
+        else if(s && s.subscription)
+        {
+            //            publishMessage(s.message)
+        }
+        
+        else if(s && s.timetoken)
+        {
+            //            publishMessage(s.message)
+        }
+        
     },
-    (e)=>{
+                                                (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
-
+    
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     document.getElementById('deviceready').classList.add('ready');
 }
@@ -48,7 +83,7 @@ function pubNubGlobalHereNow(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                         (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -56,12 +91,12 @@ function pubNubGlobalHereNow(){
 
 // parameter (message)
 
-function publishMessage(){
-    window.cordova.plugins.pubNubios.publishMessage(['testArg'],(s)=>{
+function publishMessage(message= null){
+    window.cordova.plugins.pubNubios.publishMessage([message?message:`testArg ${new Date().toISOString()}`],(s)=>{
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                    (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -74,7 +109,7 @@ function removeChannelsMetaData(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                            (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -87,7 +122,7 @@ function removeAllPushNotification(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                               (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -100,7 +135,7 @@ function enablePushNotification(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                            (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -113,7 +148,7 @@ function pushNotificationOnChammel(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                               (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -127,7 +162,7 @@ function messgaeCount(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                  (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -141,7 +176,7 @@ function deleteMessageFromChannel(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                              (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -154,7 +189,7 @@ function historyOfLastThreeMessage(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                               (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -167,7 +202,7 @@ function historyOfChannel(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                      (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -179,7 +214,7 @@ function listOfSubcribedUdid(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                         (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -192,7 +227,7 @@ function listOfUdidFromChannel(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                           (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -206,7 +241,7 @@ function signal(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                            (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -219,7 +254,7 @@ function sendMessageWithCompression(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                                (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -232,7 +267,7 @@ function addMessageAction(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                      (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -243,7 +278,7 @@ function pubNubWhereNow(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                      (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -254,7 +289,7 @@ function pubNubGlobalHereNow(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                         (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -268,7 +303,7 @@ function pubNubHereNowForChannel(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                             (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -281,7 +316,7 @@ function pubNubSubscribeToPresence(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                               (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
@@ -294,7 +329,7 @@ function pubNubUnsubFromPresence(){
         document.getElementById('deviceready').textContent = `++++${s}`;
         console.log(s);
     },
-    (e)=>{
+                                                             (e)=>{
         document.getElementById('deviceready').textContent = `====${s}`;
         console.log(e)
     })
