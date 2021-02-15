@@ -121,68 +121,15 @@
     [self pubNubInit];
     
 #pragma mark - Time
-    
-//    [self pubNubTime];
-    
 #pragma mark - Publish
-//    [self pubNubPublish];
-    
 #pragma mark - History
-    
-//    [self pubNubHistory];
-//
-//#pragma mark - Channel Groups Subscribe / Unsubscribe
-//
-//    [self pubNubSubscribeToChannelGroup];
-//    [self pubNubUnsubFromChannelGroups];
-//
-//#pragma mark - Channel Subscribe / Unsubscribe
-//
-//    [self pubNubSubscribeToChannels];
-//    [self pubNubUnsubscribeFromChannels];
-//
-//#pragma mark - Presence Subscribe / Unsubscribe
-//
-//    [self pubNubSubscribeToPresence];
-//    [self pubNubUnsubFromPresence];
-//
-//#pragma mark - Here Nows
-//
-//    [self pubNubHereNowForChannel];
-//    [self pubNubGlobalHereNow];
-//    [self pubNubHereNowForChannelGroups];
-//    [self pubNubWhereNow];
-//
-//#pragma mark - CG Admin
-//
-//    [self pubNubCGAdd];
-//    [self pubNubChannelsForGroup];
-//    [self pubNubCGRemoveAllChannels];
-//    [self pubNubCGRemoveSomeChannels];
     
 #pragma mark - State Admin
     [self pubNubSetState];
     [self pubNubGetState];
-//    pubNubios *foo = [[pubNubios alloc] init];
-//    [foo pubNubGetState:^(NSString* result){
-//        // Prints 10
-//        NSLog(@"%@", result);
-//    }];
     
     
 #pragma mark - 3rd Party Push Notifications Admin
-    
-//    [self pubNubAddPushNotifications];
-//    [self pubNubRemovePushNotification];
-//    [self pubNubRemoveAllPushNotifications];
-//    [self pubNubGetAllPushNotifications];
-//
-//#pragma mark - Public Encryption/Decryption Methods
-//
-//    [self pubNubAESDecrypt];
-//    [self pubNubAESEncrypt];
-//
-//#pragma mark - Message Size Check Methods
 //
     [self pubNubSizeOfMessage];
     
@@ -441,7 +388,7 @@
             NSLog(@"^^^^ Non-error status: Message Count Exceeded");
         }
         
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"PNSubscribeOperation"];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: status.origin];
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId: _callerId];
         
@@ -495,7 +442,7 @@
             // the case where we're dealing with CGs instead of CHs... follows the same pattern as above
         }
         
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"PNSubscribeOperation"];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: status.origin];
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId: _callerId];
         
@@ -504,7 +451,7 @@
         NSLog(@"^^^^ Error publishing with authKey: %@ to channel %@.", _authKey, pamResourceName);
         NSLog(@"^^^^ Setting auth to an authKey that will allow for both sub and pub");
         
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"PNPublishOperation"];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: status.origin];
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId: _callerId];
         
@@ -529,17 +476,6 @@
               }
         
           }];
-    
-    /*
-     [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> compressed:<#(BOOL)compressed#> withCompletion:<#(PNPublishCompletionBlock)block#>];
-     [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> withCompletion:<#(PNPublishCompletionBlock)block#>];
-     [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> storeInHistory:<#(BOOL)shouldStore#> withCompletion:<#(PNPublishCompletionBlock)block#>];
-     [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> storeInHistory:<#(BOOL)shouldStore#> compressed:<#(BOOL)compressed#> withCompletion:<#(PNPublishCompletionBlock)block#>];
-     [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> mobilePushPayload:<#(NSDictionary *)payloads#> withCompletion:<#(PNPublishCompletionBlock)block#>];
-     [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> mobilePushPayload:<#(NSDictionary *)payloads#> compressed:<#(BOOL)compressed#> withCompletion:<#(PNPublishCompletionBlock)block#>];
-     [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> mobilePushPayload:<#(NSDictionary *)payloads#> storeInHistory:<#(BOOL)shouldStore#> withCompletion:<#(PNPublishCompletionBlock)block#>];
-     [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> mobilePushPayload:<#(NSDictionary *)payloads#> storeInHistory:<#(BOOL)shouldStore#> compressed:<#(BOOL)compressed#> withCompletion:<#(PNPublishCompletionBlock)block#>];
-     */
     
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"message succesfully published"];
     [pluginResult setKeepCallbackAsBool:YES];
@@ -597,7 +533,7 @@
         
         
         CDVPluginResult* pluginResult = nil;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"success"];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"get state called"];
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId: self->_callerId];
                    
@@ -624,11 +560,18 @@
     }
     
     if (message) {
+    
+        NSMutableDictionary *contentDictionary = [[NSMutableDictionary alloc]init];
+        [contentDictionary setValue: message.data.message forKey:@"message"];
+        [contentDictionary setValue:message.data.publisher forKey:@"publisher"];
+        [contentDictionary setValue:message.data.channel forKey:@"channel"];
+        [contentDictionary setValue:message.data.subscription forKey:@"subcription"];
+        [contentDictionary setValue:message.data.timetoken forKey:@"timetoken"];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:contentDictionary options:NSJSONWritingPrettyPrinted error:nil];
+        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         
-        NSLog(@"Received message from '%@': %@ on channel %@ at %@", message.data.publisher,
-              message.data.message, message.data.channel, message.data.timetoken);
         
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: message.data.message];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: jsonString];
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId: _callerId];
     }
@@ -662,7 +605,21 @@
               event.data.presence.timetoken, event.data.channel, event.data.presence.state);
     }
     
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"presenceEventCalled"];
+    
+    
+    NSMutableDictionary *contentDictionaryPresence = [[NSMutableDictionary alloc]init];
+    [contentDictionaryPresence setValue: event.data.presence.uuid forKey:@"uuid"];
+    [contentDictionaryPresence setValue: event.data.timetoken forKey:@"timetoken"];
+    [contentDictionaryPresence setValue: event.data.channel forKey:@"channel"];
+    [contentDictionaryPresence setValue: event.data.presenceEvent forKey:@"presenceEvent"];
+    NSData *data = [NSJSONSerialization dataWithJSONObject:contentDictionaryPresence options:NSJSONWritingPrettyPrinted error:nil];
+    NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    
+    
+    
+    
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: jsonString];
     [pluginResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:pluginResult callbackId: _callerId];
     
@@ -679,7 +636,14 @@
     // Results (presence events) from our subscribe loop will be found in didReceiveStatus
     
     
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"didReceveStatus"];
+    NSMutableDictionary *contentDictionaryPresence = [[NSMutableDictionary alloc]init];
+    [contentDictionaryPresence setValue: status.origin forKey:@"origin"];
+    [contentDictionaryPresence setValue: status.uuid forKey:@"uuid"];
+    NSData *data = [NSJSONSerialization dataWithJSONObject:contentDictionaryPresence options:NSJSONWritingPrettyPrinted error:nil];
+    NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: jsonString];
     [pluginResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:pluginResult callbackId: _callerId];
     
@@ -699,7 +663,7 @@
     [self.client subscribeToPresenceChannels:@[channelsName]];
     
     CDVPluginResult* pluginResult = nil;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"sucessfully subcribed"];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"Subscribe To Presence Called"];
     [pluginResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:pluginResult callbackId: _callerId];
     
@@ -711,7 +675,7 @@
     [self.client unsubscribeFromPresenceChannels:@[channelsName]];
     
     CDVPluginResult* pluginResult = nil;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"sucessfully Unsubcribed"];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"Unsubscribe To Presence Called"];
     [pluginResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:pluginResult callbackId: _callerId];
 }
@@ -743,8 +707,6 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId: self->_callerId];
         
     }];
-    
-
 }
 
 
@@ -771,12 +733,6 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId: self->_callerId];
         
     }];
-    
-    // If you want to control the 'verbosity' of the server response -- restrict to (values are additive):
-    
-    // Occupancy                : PNHereNowOccupancy
-    // Occupancy + UUID         : PNHereNowUUID
-    // Occupancy + UUID + State : PNHereNowState
     
     [self.client hereNowWithVerbosity:PNHereNowOccupancy completion:^(PNPresenceGlobalHereNowResult *result,
                                                                       PNErrorStatus *status) {
@@ -863,12 +819,22 @@
             }
             
             
-            NSArray* notifications = [NSArray arrayWithObjects:status.data.action, nil];
             
-            NSError *writeError = nil;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:notifications options:NSJSONWritingPrettyPrinted error:&writeError];
-            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            NSLog(@"JSON Output: %@", jsonString);
+            NSMutableDictionary *contentDictionaryPresence = [[NSMutableDictionary alloc]init];
+            [contentDictionaryPresence setValue: status.data.action.actionTimetoken forKey:@"actionTimetoken"];
+            [contentDictionaryPresence setValue: status.data.action.uuid forKey:@"uuid"];
+            [contentDictionaryPresence setValue: status.data.action.value forKey:@"value"];
+            NSData *data = [NSJSONSerialization dataWithJSONObject:contentDictionaryPresence options:NSJSONWritingPrettyPrinted error:nil];
+            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
+            
+            
+//            NSArray* notifications = [NSArray arrayWithObjects:status.data.action, nil];
+//
+//            NSError *writeError = nil;
+//            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:notifications options:NSJSONWritingPrettyPrinted error:&writeError];
+//            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//            NSLog(@"JSON Output: %@", jsonString);
             
             CDVPluginResult* pluginResult = nil;
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: jsonString];
@@ -1134,10 +1100,11 @@ self.client.deleteMessage().channel(channelsName).start(timeTokenStart).end(time
         */
     }
         
+        
 
         
         CDVPluginResult* pluginResult = nil;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @"Message remove successfully"];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: status.origin];
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId: self->_callerId];
 });
